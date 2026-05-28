@@ -33,6 +33,32 @@ app.get('/', (req, res) => {
 	res.send('<p>Вітаємо! Це бекенд сервер крипто-калькулятора. Він працює і чекає на запити з React.</p>')
 });
 
+app.get('/api/strategies', async (req, res) => {
+	try {
+		const result = await pool.query('SELECT * FROM strategies ORDER BY created_at DESC');
+
+		const formattedStrategies = result.rows.map(row => ({
+			id: row.id,
+			coin: row.coin,
+			buyPrice: Number(row.buy_price),
+			sellPrice: Number(row.sell_price),
+			averagingPrice: Number(row.averaging_price),
+			targetPercent: Number(row.target_percent),
+			investSumUsdt: Number(row.invest_sum_usdt),
+			sellSumAfter: Number(row.sell_sum_after),
+			coinAmount: Number(row.coin_amount),
+			transactionFee: Number(row.transaction_fee),
+			netProfit: Number(row.net_profit),
+			createdAt: row.created_at
+		}));
+
+		res.status(200).json(formattedStrategies);
+	} catch (error) {
+		console.error('Помилка отримання стратегій з бази даних', error);
+		res.status(500).json({ error: 'Не вдалося завантажити історію стратегій' });
+	}
+});
+
 app.post('/api/calculate', async (req, res) => {
 	const { coin, buyPrice, investSumUsdt, targetPercent } = req.body;
 
