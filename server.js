@@ -128,6 +128,23 @@ app.post('/api/calculate', async (req, res) => {
 	}
 });
 
+app.delete('/api/strategies/:id', async (req, res) => {
+	const { id } = req.params;
+
+	try {
+		const result = await pool.query('DELETE FROM strategies WHERE id = $1 RETURNING *', [id]);
+
+		if (result.rowCount === 0) {
+			return res.status(404).json({ error: 'Стратегію не знайдено' });
+		}
+
+		res.status(200).json({ message: 'Стратегію успішно видалено', deleteStrategy: result.rows[0] });
+	} catch (err) {
+		console.error('Помилка видалення стратегії:', err.message);
+		res.status(500).json({ error: 'Помилка сервера при видаленні запису' });
+	}
+});
+
 app.listen(PORT, () => {
 	console.log(`Сервер запущено на http://localhost:${PORT}`);
 });
