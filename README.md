@@ -14,3 +14,4 @@ REST API for the Trade Calc app, handling secure data storage for trading strate
 ## Endpoints
 - `GET /api/strategies` — Get saved logs.
 - `POST /api/strategies` — Save a new strategy.
+- `DELETE /api/strategies/:id` — Delete a specific trading strategy.
